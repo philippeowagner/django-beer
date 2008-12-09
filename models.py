@@ -2,6 +2,7 @@ from django.db import models
 
 class Hop(models.Model):
     """Represents hop as defined by beerxml."""
+    
     USE_CHOICES = (
         ('boil', 'Boil'),
         ('dry_hop', 'Dry Hop'),
@@ -24,7 +25,7 @@ class Hop(models.Model):
     
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
-    version = models.PositiveSmallIntegerField(default=1)
+    version = models.PositiveIntegerField(default=1)
     alpha = models.FloatField()
     amount = models.FloatField()
     use = models.CharField(max_length=10, choices=USE_CHOICES)
@@ -43,7 +44,7 @@ class Hop(models.Model):
     
     def __unicode__(self):
         return self.name
-    
+
 class Fermentable(models.Model):
     """Represents fermentables as defined by beerxml."""
     
@@ -73,7 +74,7 @@ class Fermentable(models.Model):
     max_in_batch = models.FloatField(blank=True, null=True),
     recommend_mash = models.BooleanField(default=False)
     ibu_gal_per_lb = models.FloatField(blank=True, null=True)
-
+    
     def __unicode__(self):
          return self.name
 
@@ -124,3 +125,79 @@ class Yeast(models.Model):
     def __unicode__(self):
         return self.name
 
+class Misc(models.Model):
+    """The miscellaneous non-fermentable ingredients has specified by beerxml."""
+    
+    TYPE_CHOICES = (
+        ('spice', 'Spice'),
+        ('fining', 'Fining'),
+        ('wateragent', 'Water Agent'),
+        ('herb', 'Herb'),
+        ('flavor', 'Flavor'),
+        ('other', 'Other'),
+    )
+    
+    USE_CHOICES = (
+        ('boil', 'Boil'),
+        ('mash', 'Mash'),
+        ('primary', 'Primary'),
+        ('secondary', 'Secondary'),
+        ('bottling', 'Bottling'),
+    )
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    misc_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    misc_use = models.CharField(max_length=10, choices=USE_CHOICES)
+    time = models.FloatField()
+    amount = models.FloatField()
+    amount_is_weight = models.BooleanField(default=False)
+    use_for = models.CharField(blank=True, null=True, max_length=100)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+class Water(models.Model):
+    """Represents water as defined by beerxml."""
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    amount = models.FloatField()
+    calcium = models.FloatField()
+    bicarbonate = models.FloatField()
+    sulfate = models.FloatField()
+    chloride = models.FloatField()
+    sodium = models.FloatField()
+    magnesium = models.FloatField()
+    ph = models.FloatField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+class Equipment(models.Model):
+    """Provides details about needed equipment."""
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    boil_size = models.FloatField()
+    batch_size = models.FloatField()
+    tun_volume = models.FloatField(blank=True, null=True)
+    tun_weight = models.FloatField(blank=True, null=True)
+    tun_specific_heat = models.FloatField(blank=True, null=True)
+    top_up_water = models.FloatField(blank=True, null=True)
+    trub_chiller_loss = models.FloatField(blank=True, null=True)
+    evap_rate = models.FloatField(blank=True, null=True)
+    boil_time = models.FloatField(blank=True, null=True)
+    calc_boil_volume = models.BooleanField(default=False)
+    lauter_deadspace = models.FloatField(blank=True, null=True)
+    top_up_kettle = models.FloatField(blank=True, null=True)
+    hop_utilization = models.FloatField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
