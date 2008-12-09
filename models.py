@@ -201,3 +201,123 @@ class Equipment(models.Model):
     
     def __unicode__(self):
         return self.name
+        
+class Style(models.Model):
+    """The style of beer as defined by the beerxml."""
+    
+    TYPE_CHOICES = (
+        ('ale', 'Ale'),
+        ('cider', 'Cider'),
+        ('lager', 'Lager'),
+        ('mead', 'Mead'),
+        ('mixed', 'Mixed'),
+        ('wheat', 'Wheat'),
+    )
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    category = models.CharField(max_length=100)
+    category_number = models.CharField(max_length=100)
+    style_letter = models.CharField(max_length=100)
+    style_guide = models.CharField(max_length=100)
+    style_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    og_min = models.FloatField()
+    og_max = models.FloatField()
+    fg_min = models.FloatField()
+    fg_max = models.FloatField()
+    ibu_min = models.FloatField()
+    ibu_max = models.FloatField()
+    color_min = models.FloatField()
+    color_max = models.FloatField()
+    carb_min = models.FloatField(blank=True, null=True)
+    carb_max = models.FloatField(blank=True, null=True)
+    abv_min = models.FloatField(blank=True, null=True)
+    abv_max = models.FloatField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    profile = models.TextField(blank=True, null=True)
+    ingredients = models.TextField(blank=True, null=True)
+    examples = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+
+class MashProfile(models.Model):
+    """
+    A mash profile is a record used either within a recipe or outside the 
+    recipe to precisely specify the mash method used.
+    """
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    grain_temp = models.FloatField()
+    notes = models.TextField(blank=True, null=True)
+    tun_temp = models.FloatField(blank=True, null=True)
+    sparge_temp = models.FloatField(blank=True, null=True)
+    sparge_ph = models.FloatField(blank=True, null=True)
+    tun_weight = models.FloatField(blank=True, null=True)
+    tun_specific_heat = models.FloatField(blank=True, null=True)
+    equip_adjust = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+
+class MashStep(models.Model):
+        """
+        A mash step is an internal record used within a mash profile to denote a 
+        separate step in a multi-step mash.
+        """
+
+        TYPE_CHOICES = (
+            ('infusion', 'Infusion'),
+            ('temperature', 'Temperature'),
+            ('decoction', 'Decoction'),
+        )
+
+        name = models.CharField(max_length=100)
+        slug = models.SlugField(max_length=100)
+        version = models.PositiveSmallIntegerField(default=1)
+        mash_step_type = models.CharField(max_length=12, choices=TYPE_CHOICES)
+        infuse_amount = models.FloatField(blank=True, null=True)
+        step_temp = models.FloatField()
+        step_time = models.FloatField()
+        ramp_time = models.FloatField(blank=True, null=True)
+        end_temp = models.FloatField(blank=True, null=True)
+        mash_profile = models.ForeignKey('MashProfile') 
+
+        def __unicode__(self):
+            return self.name    
+
+class Recipe(models.Model):
+    """A beer recipe."""
+    
+    TYPE_CHOICES = (
+        ('extract', 'Extract'),
+        ('partial_mash', 'Partial Mash'),
+        ('all_grain', 'All Grain'),
+    )
+    
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    recipe_type = models.CharField(max_length=12, choices=TYPE_CHOICES)
+    style = models.ManyToManyField('Style')
+    equipment = models.ManyToManyField('Equipment', blank=True, null=True)
+    brewer = models.CharField(max_length=100)
+    asst_brewer = models.CharField(blank=True, null=True, max_length=100)
+    batch_size = models.FloatField()
+    boil_size = models.FloatField()
+    boil_time = models.FloatField()
+    effeciency = models.FloatField(blank=True, null=True)
+    hops = models.ManyToManyField('Hop', blank=True, null=True)
+    fermentables = models.ManyToManyField('Fermentable', blank=True, null=True)
+    miscs = models.ManyToManyField('Misc', blank=True, null=True)
+    yeasts = models.ManyToManyField('Yeast', blank=True, null=True)
+    waters = models.ManyToManyField('Water', blank=True, null=True)
+    mash = models.ManyToManyField('MashProfile', blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    #TODO: Many more fields here....
+    
+    def __unicode__(self):
+        return self.name
