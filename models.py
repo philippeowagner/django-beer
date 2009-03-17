@@ -264,30 +264,30 @@ class MashProfile(models.Model):
         return self.name
 
 class MashStep(models.Model):
-        """
-        A mash step is an internal record used within a mash profile to denote a 
-        separate step in a multi-step mash.
-        """
+    """
+    A mash step is an internal record used within a mash profile to denote a 
+    separate step in a multi-step mash.
+    """
 
-        TYPE_CHOICES = (
-            ('infusion', 'Infusion'),
-            ('temperature', 'Temperature'),
-            ('decoction', 'Decoction'),
-        )
+    TYPE_CHOICES = (
+        ('infusion', 'Infusion'),
+        ('temperature', 'Temperature'),
+        ('decoction', 'Decoction'),
+    )
 
-        name = models.CharField(max_length=100)
-        slug = models.SlugField(max_length=100)
-        version = models.PositiveSmallIntegerField(default=1)
-        mash_step_type = models.CharField(max_length=12, choices=TYPE_CHOICES)
-        infuse_amount = models.FloatField(blank=True, null=True)
-        step_temp = models.FloatField()
-        step_time = models.FloatField()
-        ramp_time = models.FloatField(blank=True, null=True)
-        end_temp = models.FloatField(blank=True, null=True)
-        mash_profile = models.ForeignKey('MashProfile') 
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    version = models.PositiveSmallIntegerField(default=1)
+    mash_step_type = models.CharField(max_length=12, choices=TYPE_CHOICES)
+    infuse_amount = models.FloatField(blank=True, null=True)
+    step_temp = models.FloatField()
+    step_time = models.FloatField()
+    ramp_time = models.FloatField(blank=True, null=True)
+    end_temp = models.FloatField(blank=True, null=True)
+    mash_profile = models.ForeignKey('MashProfile') 
 
-        def __unicode__(self):
-            return self.name    
+    def __unicode__(self):
+        return self.name    
 
 class Recipe(models.Model):
     """A beer recipe."""
@@ -317,7 +317,27 @@ class Recipe(models.Model):
     waters = models.ManyToManyField('Water', blank=True, null=True)
     mash = models.ManyToManyField('MashProfile', blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    #TODO: Many more fields here....
+    taste_notes = models.TextField(blank=True, null=True)
+    taste_rating = models.FloatField(blank=True, null=True)
+    og = models.FloatField(blank=True, null=True)
+    fg = models.FloatField(blank=True, null=True)
+    fermentation_stages = models.PositiveSmallIntegerField(blank=True, null=True)
+    primary_age = models.FloatField(blank=True, null=True)
+    primary_temp = models.FloatField(blank=True, null=True)
+    secondary_age = models.FloatField(blank=True, null=True)
+    secondary_temp = models.FloatField(blank=True, null=True)
+    tertiary_age = models.FloatField(blank=True, null=True)
+    tertiary_temp = models.FloatField(blank=True, null=True)
+    age = models.FloatField(blank=True, null=True)
+    age_temp = models.FloatField(blank=True, null=True)
+    date = models.DateField()
+    carbonation = models.FloatField(blank=True, null=True)
+    forced_carbonation = models.BooleanField(default=False)
+    priming_sugar_name = models.CharField(blank=True, null=True, max_length=100)
+    carbonation_temp = models.PositiveSmallIntegerField(blank=True, null=True)
+    priming_sugar_equiv = models.FloatField(blank=True, null=True)
+    keg_priming_factor = models.FloatField(blank=True, null=True)
+    
     
     def __unicode__(self):
         return self.name
